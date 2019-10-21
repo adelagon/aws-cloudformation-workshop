@@ -1,0 +1,71 @@
+Parameters:
+    EnvironmentName:
+        Description: An environment name that will be prefixed to resource names
+        Type: String
+    
+    VpcCIDR:
+        Description: CIDR range for the VPC
+        Type: String
+        Default: 10.0.0.0/16
+        
+    PublicSubnetCIDR1:
+        Description: Please enter the CIDR range for the public subnet in the first AZ
+        Type: String
+        Default: 10.0.1.0/24
+        
+    PublicSubnetCIDR2:
+        Description: Please enter the CIDR range for the public subnet in the second AZ
+        Type: String
+        Default: 10.0.2.0/24
+        
+    PrivateSubnetCIDR1:
+        Description: Please enter the CIDR range for the private subnet in the first AZ
+        Type: String
+        Default: 10.0.10.0/24
+        
+    PrivateSubnetCIDR2:
+        Description: Please enter the CIDR range for the private subnet in the second AZ
+        Type: String
+        Default: 10.0.20.0/24
+        
+    WebServerAMIId:
+        Description: AMI ID for the Webserver image
+        Type: String
+        Default: ami-06bfbc4807fa73e58
+    
+    WebServerInstanceType:
+        Description: EC2 instance type for the web server
+        Type: String
+        Default: t2.micro
+
+    KeyName:
+        Description: Name of the existing EC2 keypair to enable remote access to the instances
+        Type: AWS::EC2::KeyPair::KeyName
+        ConstraintDescription: Must be the name of the existing EC2 keypair
+        
+Resources:
+    NetworkStack:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: https://alvin-cloudformation-workshop.s3-ap-southeast-1.amazonaws.com/network-stack.yml
+            Parameters:
+                EnvironmentName: !Ref EnvironmentName
+                VpcCIDR: !Ref VpcCIDR
+                PublicSubnetCIDR1: !Ref PublicSubnetCIDR1
+                PublicSubnetCIDR2: !Ref PublicSubnetCIDR2
+                PrivateSubnetCIDR1: !Ref PrivateSubnetCIDR1
+                PrivateSubnetCIDR2: !Ref PrivateSubnetCIDR2
+    
+    WebStack:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: https://alvin-cloudformation-workshop.s3-ap-southeast-1.amazonaws.com/web-stack.yml
+            Parameters:
+                EnvironmentName: !Ref EnvironmentName
+                WebServerAMIId: !Ref WebServerAMIId
+                WebServerInstanceType: !Ref WebServerInstanceType
+                KeyName: !Ref KeyName
+
+            
+                
+    

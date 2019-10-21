@@ -1,0 +1,50 @@
+Parameters:
+    EnvironmentName:
+        Description: An environment name that will be prefixed to resource names
+        Type: String
+        
+    WebServerAMIId:
+        Description: AMI ID for the Webserver image
+        Type: String
+        Default: ami-048a01c78f7bae4aa
+        
+    WebServerInstanceType:
+        Description: EC2 instance type for the web server
+        Type: String
+        Default: t2.micro
+        
+    KeyName:
+        Description: Name of the existing EC2 keypair to enable remote access to the instances
+        Type: AWS::EC2::KeyPair::KeyName
+        ConstraintDescription: Must be the name of the existing EC2 keypair
+        
+    NetworkStackName:
+        Description: Name of the NetworkStack
+        Type: String
+        Default: NetworkStack
+        
+Resources:
+    WebServerSecurityGroups:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: SecurityGroup for the SAP B1 Server Instance
+            VpcId: !Sub '${NetworkStackName}-VPC'
+            SecurityGroupIngress:
+                - IpProtocol: tcp
+                  FromPort: 22
+                  ToPort: 22
+                  CidrIp: 0.0.0.0/0
+                  
+    WebServerInstance1:
+        Type: AWS::EC2::Instance
+        Properties:
+            ImageId: !Ref WebServerAMIId
+            KeyName: !Ref KeyName
+            InstanceType: !Ref WebServerInstanceType
+            SubnetId: !Sub '${NetworkStackName}-PublicSubnet1'
+            SecurityGroupIds:
+                - !Ref WebServerSecurityGroups
+            Tags:
+                - Key: Name
+                  Value: !Sub ${EnvironmentName} Web Server
+            
