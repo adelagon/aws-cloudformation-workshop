@@ -1,0 +1,33 @@
+Parameters:
+    EC2Name:
+        Description: Name of the EC2 instance
+        Type: String
+        
+Resources:
+    EC2Instance:
+        Type: AWS::EC2::Instance
+        Properties:
+            ImageId: ami-0b69ea66ff7391e80
+            InstanceType: t2.micro
+            KeyName: alvinator-immersion-day
+            SecurityGroups:
+                - default
+            Tags:
+                - Key: Name
+                  Value: !Ref EC2Name
+
+    EC2EIP:
+        Type: AWS::EC2::EIP
+        
+    EIPAssoc:
+        Type: AWS::EC2::EIPAssociation
+        Properties:
+            InstanceId: !Ref EC2Instance
+            EIP: !Ref EC2EIP
+            
+Outputs:
+    EC2IP:
+        Description: Public IP of the EC2 instance
+        Value: !Ref EC2EIP
+
+ 

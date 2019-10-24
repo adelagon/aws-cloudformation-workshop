@@ -1,0 +1,13 @@
+Resources:
+    EC2Instance:
+        Type: AWS::EC2::Instance
+        Properties:
+            ImageId: ami-0b69ea66ff7391e80
+            InstanceType: t2.micro
+            KeyName: alvinator-immersion-day
+            SecurityGroups:
+                - default
+            Tags:
+                - Key: Name
+                  Value: my-ec2-instance
+ 
